@@ -1,8 +1,7 @@
 # JoinEm.io
 
 ## Description:
-
-App allowing users to spend leisure time offline playing a popular two-player game focused around setting up four chips in a neat row. Features:
+ML-based implementation of a popular board game that revolves around connecting player's chips in a neat row of four. Features:
 
 - Minimalist interface for distraction-free gameplay
 - Two-player mode

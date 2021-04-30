@@ -41,7 +41,7 @@ ML-based implementation of a popular board game that revolves around connecting 
 
 5. 28.05 - 06.05
 
-   FInishing the AI part of the 
+   Finishing the AI part of the project
 
 ## Contributors:
 

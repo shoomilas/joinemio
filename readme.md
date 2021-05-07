@@ -13,9 +13,9 @@ ML-based implementation of a popular board game that revolves around connecting 
 ## Technology Stack:
 
 - Python
-- PyTorch
-- SciPy
-- PyGame
+- Pyglet
+- SciPy stack
+- OpenAI Gym
 - SQLite
 
 ## Contributors:

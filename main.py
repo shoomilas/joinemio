@@ -9,6 +9,7 @@ from pyglet.window import mouse
 def column(x):
     return x // Game.columns_width
 
+# TODO: base the game logic on a numpy matrix 
 class Game:
     columns = 7
     rows = 6
@@ -29,6 +30,7 @@ class Game:
         self.current_player = 1
         self.game_over = False
     
+    # TODO: refactor into simpler method calls | simplify grid iteration
     def get_winning_line(self):
         for row in range(0, Game.rows):
             for col in range(0, 4):
@@ -55,6 +57,7 @@ class Game:
                     return (col - 3, row - 3), (col - 2, row - 2), (col - 1, row - 1), (col, row)
         return ()
 
+    # TODO: simplify the ifology
     def update(self, dt):
     # global game.last_column_clicked, game.current_player, game.game_over
         if game.game_over:

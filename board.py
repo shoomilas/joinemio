@@ -48,6 +48,15 @@ class Board:
         log.debug(f"Did not find a winning group of any element for vector: {vector}")
         return Board.empty
 
+    def check_if_not_full(self):
+        for i in range(self.columns):
+            if self.grid[0][i] == 0:
+                return True
+        log.debug(
+            f"Grid is full, it is a draw"
+        )
+        return False
+
     def check_result_vertical(self):
         log.debug(f"VERTICAL CHECK")
         for col in range(self.columns):
@@ -117,7 +126,10 @@ class Game:
                 self.winner = self.current_player
                 self.game_state = game_result
             else:
-                self.switch_player()
+                if self.board.check_if_not_full():
+                    self.switch_player()
+                else:
+                    self.game_state = GameState.finished
         else:
             return
 

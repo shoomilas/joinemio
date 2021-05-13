@@ -1,6 +1,6 @@
-import numpy as np
 import itertools
 import logging as log
+import numpy as np
 
 
 LOG_LEVEL = log.DEBUG

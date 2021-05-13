@@ -1,14 +1,12 @@
 import logging as log
-import numpy as np
-
-from board import Game
-from board import Board
-from board import GameState
+from math import sin, cos, pi
 from pyglet import gl
 from pyglet import graphics
 from pyglet.window import Window
 from pyglet.window import mouse
-from math import sin, cos, pi
+import numpy as np
+from board import Game
+from board import GameState
 
 
 class GameWindow:
@@ -25,15 +23,13 @@ class GameWindow:
     win_width = 7 * column_width
     win_height = 6 * row_height
 
-    def __init__(self, game=None):  # could move outside
+    def __init__(self, game=None):
         self.game = game
         if game is None:
             self.game = Game()
         self.win_width = self.game.board.columns * self.column_width
         self.win_height = self.game.board.rows * self.row_height
-        self.window = Window(
-            width=self.win_width, height=self.win_height
-        )  # ,visible=False)
+        self.window = Window(width=self.win_width, height=self.win_height)
         self.on_draw = self.window.event(self.on_draw)
         self.on_mouse_press = self.window.event(self.on_mouse_press)
 
@@ -43,7 +39,6 @@ class GameWindow:
         self.draw_all_pieces()
 
     def on_mouse_press(self, x, y, button, modifiers):
-        # global game.last_column_clicked
         if self.game.game_state == GameState.finished:
             return
         column_clicked = x // self.column_width
@@ -56,10 +51,10 @@ class GameWindow:
         log.debug(f"Current game.board.grid state: \n{self.game.board.grid}")
 
     def draw_all_pieces(self):
-        for index, x in np.ndenumerate(self.game.board.grid):
-            if x == 1:
+        for index, cell in np.ndenumerate(self.game.board.grid):
+            if cell == 1:
                 self.draw_piece(index[1], 5 - index[0], self.player_one_color)
-            if x == 2:
+            if cell == 2:
                 self.draw_piece(index[1], 5 - index[0], self.player_two_color)
 
     def draw_piece(self, x, y, color=(255, 255, 255, 0)):
@@ -73,10 +68,10 @@ class GameWindow:
 
     def draw_reg_polygon(self, x, y, r, n, color=(255, 255, 255, 0)):
         vertices = []
-        th = 0
+        theta = 0
         for _ in range(n):
-            vertices += [x + r * sin(th), y + r * cos(th)]
-            th += 2 * pi / n
+            vertices += [x + r * sin(theta), y + r * cos(theta)]
+            theta += 2 * pi / n
         graphics.draw(n, gl.GL_POLYGON, ("v2f", vertices), ("c4B", color * n))
 
     def draw_grid(self):

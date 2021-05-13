@@ -124,30 +124,56 @@ class Game: # TODO
                 self.switch_player()
         else: 
             pass # repeat move
-class Render(): # TODO
+
+class GameWindow(pyglet.window.Window): # TODO
     column_width = row_height = 100
+    black_color = (0,0,0,0)
+    red_color = (255, 0, 0, 0)
+    blue_color = (0, 0, 255, 0)
+    grid_color = black_color
+    player_one_color = red_color
+    player_two_color = blue_color
+    piece_radius = row_height * 0.4
+    win_width = 7 * column_width
+    win_height = 6 * row_height
     
     def __init__(self, game = None): # could move outside 
         self.game = game
         if game == None: self.game = Game()
-        win_width = self.game.board.columns * self.column_width
-        win_height = self.game.board.rows * self.row_height
-        self.window = Window(width=win_width, height=win_height) # ,visible=False)
+        self.win_width = self.game.board.columns * self.column_width
+        self.win_height = self.game.board.rows * self.row_height
+        super().__init__(width=self.win_width, height=self.win_height) # ,visible=False)
 
     # @self.window.event # TODO
-    # def on_draw(self):
-    #     window.clear()
+    def on_draw(self):
+        self.clear()
+        self.draw_grid()
     #     draw_grid()
     #     draw_all_pieces()
 
     # @window.event # TODO
     # def on_mouse_press(x, y, button, modifiers):
 
-    def draw_all_pieces(): pass
-    def draw_grid(): pass
-    def draw_piece(): pass
-    def draw_reg_polygon(): pass
-    def draw_line(): pass
+    def update(self, dt):
+        pass
+
+    def draw_all_pieces(self): pass
+
+
+    def draw_piece(self):
+        pass
+
+    def draw_reg_polygon(self):
+        pass
+
+    def draw_grid(self):
+        for i in range(self.game.board.columns):
+            self.draw_line(i * self.row_height, 0, i * self.row_height, self.win_height, color=GameWindow.grid_color)
+        for i in range(self.game.board.rows):
+            self.draw_line(0, i * Game.columns_width, Game.win_width, i * Game.columns_width, color=GameWindow.grid_color)
+
+    def draw_line(self, x1, y1, x2, y2, color=(255, 255, 255, 0)): 
+        graphics.draw(2, gl.GL_LINES, ('v2i', (x1, y1, x2, y2)), ('c4B', color * 2))
 
 
 def main():
@@ -179,10 +205,11 @@ def main():
     # log.debug("======")
 
 
-def main_render():
-    r = Render()
+# def main_render():
+#     r = Render()
 
 
 if __name__ == "__main__":
-    main_render()
-    # main()
+    window = GameWindow()
+    clock.schedule_interval(window.update, 1 / 15)
+    app.run()

@@ -70,3 +70,17 @@ class ConnectFourEnv(gym.Env):
     def render(self, mode: str = 'console', close: bool = False) -> None:
         self.game_window.on_draw()
 
+
+def main():
+    env = ConnectFourEnv()
+    rand1 = RandomPlayer()
+    rand2 = RandomPlayer()
+    for i in range(1000):
+        env.play_one_game(rand1, rand2)
+        if env.game.winner == 1:
+            exit(1)
+        env.reset()
+
+
+if __name__ == "__main__":
+    main()

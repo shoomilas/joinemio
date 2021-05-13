@@ -6,7 +6,6 @@ from pyglet import app
 from pyglet import clock
 from pyglet import gl
 from pyglet import graphics
-import pyglet
 from pyglet.window import Window
 from pyglet.window import mouse
 from math import sin, cos, pi
@@ -38,8 +37,6 @@ class Board:
 
     def __init__(self):
         self.grid = np.zeros(Board.shape, dtype=np.ushort)
-        # self.fill_grid() # TODO: Remove
-
         self.game_over = False
 
     def drop_token(self, column_no, player) -> bool:
@@ -140,12 +137,14 @@ class Game:  # TODO
             pass  # repeat move
 
 
-class GameWindow(pyglet.window.Window):  # TODO
+class GameWindow():  # TODO
+    refresh_rate = 1/2
     column_width = row_height = 100
     black_color = (0, 0, 0, 0)
     red_color = (255, 0, 0, 0)
     blue_color = (0, 0, 255, 0)
-    grid_color = black_color
+    green_color = (0,255,0,0)
+    grid_color = green_color
     player_one_color = red_color
     player_two_color = blue_color
     piece_radius = row_height * 0.4
@@ -158,32 +157,45 @@ class GameWindow(pyglet.window.Window):  # TODO
             self.game = Game()
         self.win_width = self.game.board.columns * self.column_width
         self.win_height = self.game.board.rows * self.row_height
-        super().__init__(
-            width=self.win_width, height=self.win_height
-        )  # ,visible=False)
+        self.window = Window(width=self.win_width, height=self.win_height)  # ,visible=False)
+        self.on_draw = self.window.event(self.on_draw)
+        self.on_mouse_press = self.window.event(self.on_mouse_press)
 
-    # @self.window.event # TODO
     def on_draw(self):
-        self.clear()
+        self.window.clear()
         self.draw_grid()
+        self.draw_all_pieces()
 
-    #     draw_grid()
-    #     draw_all_pieces()
-
-    # @window.event # TODO
-    # def on_mouse_press(x, y, button, modifiers):
+    def on_mouse_press(self, x, y, button, modifiers):
+    # global game.last_column_clicked
+        if(self.game.game_state == GameState.finished):
+            return
+        column_clicked = x // self.column_width 
+        if button == mouse.LEFT:
+            self.game.move(column_clicked)
 
     def update(self, dt):
-        pass
+        if(self.game.game_state == GameState.finished):
+            return
+        log.debug(f"Current game.board.grid state: \n{self.game.board.grid}")
 
     def draw_all_pieces(self):
-        pass
+        for index, x in np.ndenumerate(self.game.board.grid):
+            if x == 1:
+                self.draw_piece(index[1], 5-index[0], self.player_one_color)
+            if x == 2:
+                self.draw_piece(index[1],  5-index[0], self.player_two_color)
 
-    def draw_piece(self):
-        pass
+    def draw_piece(self, x, y, color=(255, 255, 255, 0)):
+        self.draw_reg_polygon(x * GameWindow.column_width + GameWindow.column_width // 2, y * GameWindow.row_height + GameWindow.row_height // 2, GameWindow.piece_radius, 64, color)
 
-    def draw_reg_polygon(self):
-        pass
+    def draw_reg_polygon(self, x, y, r, n, color=(255, 255, 255, 0)):
+        vertices = []
+        th = 0
+        for _ in range(n):
+            vertices += [x + r * sin(th), y + r * cos(th)]
+            th += 2 * pi / n
+        graphics.draw(n, gl.GL_POLYGON, ('v2f', vertices), ('c4B', color * n))
 
     def draw_grid(self):
         for i in range(self.game.board.columns):
@@ -197,9 +209,9 @@ class GameWindow(pyglet.window.Window):  # TODO
         for i in range(self.game.board.rows):
             self.draw_line(
                 0,
-                i * Game.columns_width,
-                Game.win_width,
-                i * Game.columns_width,
+                i * GameWindow.column_width,
+                GameWindow.win_width,
+                i * GameWindow.column_width,
                 color=GameWindow.grid_color,
             )
 
@@ -215,7 +227,7 @@ def main():
     log.debug(bo.drop_token(3, 2))
     log.debug(bo.drop_token(3, 2))
     # log.debug( bo.drop_token(3,2) )
-    log.debug(bo.drop_token(3, 2)
+    log.debug(bo.drop_token(3, 2))
     bo2 = Board()
     bo2.drop_token(1, 1)
     bo2.drop_token(2, 1)
@@ -230,5 +242,5 @@ def main():
 
 if __name__ == "__main__":
     window = GameWindow()
-    clock.schedule_interval(window.update, 1 / 15)
+    clock.schedule_interval(window.update, GameWindow.refresh_rate)
     app.run()

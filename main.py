@@ -119,8 +119,6 @@ def draw_reg_polygon(x, y, r, n, color=(255, 255, 255, 0)):
 def draw_line(x1, y1, x2, y2, color=(255, 255, 255, 0)):
     graphics.draw(2, gl.GL_LINES, ('v2i', (x1, y1, x2, y2)), ('c4B', color * 2))
 
-
-
 if __name__ == '__main__':
     clock.schedule_interval(game.update, 1 / 15)
     app.run()

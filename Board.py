@@ -2,6 +2,16 @@ import numpy as np
 import itertools
 import logging as log
 
+from pyglet import app
+from pyglet import clock
+from pyglet import gl
+from pyglet import graphics
+import pyglet
+from pyglet.window import Window
+from pyglet.window import mouse
+from math import sin, cos, pi
+
+
 LOG_LEVEL = log.DEBUG
 LOG_FORMAT = "[%(levelname)s] %(message)s"
 log.basicConfig(format=LOG_FORMAT, level=LOG_LEVEL)
@@ -91,15 +101,53 @@ class Board:
         result = self.check_result_vertical() or self.check_result_horizontal() or self.check_result_diagonal()
         if (result != 0): 
             return GameState.finished
+        return GameState.ongoing
 
 
-# class Game: # TODO
-    # def move():
-    #     if: drop_token(bleble, current_player)
-    #     else: repeat_try
-    #     win_check()
+class Game: # TODO
+    def __init__(self):
+        self.board = Board()
+        self.current_player = 1
+        self.game_state = GameState.ongoing
+        self.winner = None
 
-# class Render(): # TODO
+    def switch_player(self): 
+        self.current_player = (self.current_player % 2) + 1
+
+    def move(self, column):
+        if (self.board.drop_token(column, self.current_player)):
+            game_result = self.board.check_result()
+            if (game_result == GameState.finished):
+                self.winner = self.current_player
+                self.game_state = game_result
+            else:
+                self.switch_player()
+        else: 
+            pass # repeat move
+class Render(): # TODO
+    column_width = row_height = 100
+    
+    def __init__(self, game = None): # could move outside 
+        self.game = game
+        if game == None: self.game = Game()
+        win_width = self.game.board.columns * self.column_width
+        win_height = self.game.board.rows * self.row_height
+        self.window = Window(width=win_width, height=win_height) # ,visible=False)
+
+    # @self.window.event # TODO
+    # def on_draw(self):
+    #     window.clear()
+    #     draw_grid()
+    #     draw_all_pieces()
+
+    # @window.event # TODO
+    # def on_mouse_press(x, y, button, modifiers):
+
+    def draw_all_pieces(): pass
+    def draw_grid(): pass
+    def draw_piece(): pass
+    def draw_reg_polygon(): pass
+    def draw_line(): pass
 
 
 def main():
@@ -127,12 +175,14 @@ def main():
     bo2.drop_token(3,1)
     bo2.drop_token(4,1)
     bo2.check_result()
-
     
     # log.debug("======")
 
-    
+
+def main_render():
+    r = Render()
 
 
 if __name__ == "__main__":
-    main()
+    main_render()
+    # main()

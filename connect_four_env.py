@@ -5,7 +5,6 @@ import logging as log
 import numpy as np
 from gym.spaces import Discrete, Box
 from Board import Game, Board, GameState
-from game_window import GameWindow
 
 
 class RandomPlayer:
@@ -15,7 +14,7 @@ class RandomPlayer:
     @staticmethod
     def possible_moves(board_state):
         available_cols = []
-        for i in range(len(board_state)):
+        for i in range(len(board_state[0])):
             if board_state[0][i] == 0:
                 available_cols.append(i)
         return available_cols
@@ -36,7 +35,6 @@ class Reward(enum.Enum):
 class ConnectFourEnv(gym.Env):
     def __init__(self):
         self.game = Game()
-        self.game_window = GameWindow(self.game)
         self.action_space = Discrete(7)
         self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.ushort)
 
@@ -49,36 +47,37 @@ class ConnectFourEnv(gym.Env):
         log.debug(
             f"Winner: {self.game.winner}"
         )
-        return self.observation_space, reward, True, info  # reward for player1
+        return self.observation_space, reward, done, info  # reward for player1
 
     def step(self, action):  # close to move from Game class
         self.game.move(action)  # switching player if game not ended
         if self.game.game_state == GameState.finished:
             if self.game.winner == 1:
-                return self.observation_space, Reward.win, False, {}
+                return self.observation_space, Reward.win, self.game.game_state, {}
             elif self.game.winner == 2:
-                return self.observation_space, Reward.loss, False, {}
+                return self.observation_space, Reward.loss, self.game.game_state, {}
             else:
-                return self.observation_space, Reward.draw, False, {}
+                return self.observation_space, Reward.draw, self.game.game_state, {}
         else:
-            return self.observation_space, Reward.not_end, False, {}  # not end
+            return self.observation_space, Reward.not_end, self.game.game_state, {}  # not end
 
     def reset(self):
         self.game = Game()
         return self.game.board.grid
 
     def render(self, mode: str = 'console', close: bool = False) -> None:
-        self.game_window.on_draw()
+        print(self.game.board.grid)
 
 
 def main():
     env = ConnectFourEnv()
     rand1 = RandomPlayer()
     rand2 = RandomPlayer()
-    for i in range(1000):
+    for i in range(100):
         env.play_one_game(rand1, rand2)
-        if env.game.winner == 1:
-            exit(1)
+        env.render()
+        if env.game.winner is None:
+            exit(0)
         env.reset()
 
 

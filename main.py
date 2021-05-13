@@ -6,9 +6,6 @@ from pyglet import graphics
 from pyglet.window import Window
 from pyglet.window import mouse
 
-def column(x):
-    return x // Game.columns_width
-
 # TODO: base the game logic on a numpy matrix 
 class Game:
     columns = 7
@@ -82,7 +79,7 @@ window = Window(Game.win_width, Game.win_height)
 def on_mouse_press(x, y, button, modifiers):
     # global game.last_column_clicked
     if button == mouse.LEFT and game.last_column_clicked == -1:
-        game.last_column_clicked = column(x)
+        game.last_column_clicked =  x // Game.columns_width
 
 @window.event
 def on_draw():

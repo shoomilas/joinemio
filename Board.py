@@ -57,35 +57,39 @@ class Board:
             current_column_vec=self.grid[:,col]
             result = self.check_sequence(current_column_vec)
             if result != 0:
-                return result
-        return 0
+                return True
+        return False
     
     def check_result_horizontal(self): # TODO
         log.debug(f"HORIZONTAL CHECK")
         for row in range(self.rows):
             current_row_vec = self.grid[row]
-            self.check_sequence(current_row_vec)
-        return 0
+            result = self.check_sequence(current_row_vec)
+            if result != 0: return True
+        return False
     
     def check_result_diagonal(self): # TODO
         log.debug("DIAGONAL CHECK")
         for diag in range(self.columns):
             if len(self.grid.diagonal(diag)) > self.winning_sequence_length: 
-                self.check_sequence(self.grid.diagonal(diag))
+                result = self.check_sequence(self.grid.diagonal(diag))
+                if result != 0: return True
             if len(self.grid.diagonal(-diag)) > self.winning_sequence_length: 
-                self.check_sequence(self.grid.diagonal(-diag))
+                result = self.check_sequence(self.grid.diagonal(-diag))
+                if result != 0: return True
         flipped_grid = np.fliplr(self.grid)
         for diag in range(self.columns):
             if len(flipped_grid.diagonal(diag)) > self.winning_sequence_length: 
-                self.check_sequence(flipped_grid.diagonal(diag))
+                result = self.check_sequence(flipped_grid.diagonal(diag))
+                if result != 0: return True
             if len(flipped_grid.diagonal(-diag)) > self.winning_sequence_length:
-                self.check_sequence(flipped_grid.diagonal(-diag))
-        # TODO: DRY
-        return 0
+                result = self.check_sequence(flipped_grid.diagonal(-diag)) 
+                if result != 0: return True
+        return False
 
     def check_result(self):
         result = self.check_result_vertical() or self.check_result_horizontal() or self.check_result_diagonal()
-        if (result == True): 
+        if (result != 0): 
             return GameState.finished
 
 
@@ -118,10 +122,10 @@ def main():
     log.debug("======")
 
     bo2 = Board()
-    bo.drop_token(1,1)
-    bo.drop_token(2,1)
-    bo.drop_token(3,1)
-    bo.drop_token(4,1)
+    bo2.drop_token(1,1)
+    bo2.drop_token(2,1)
+    bo2.drop_token(3,1)
+    bo2.drop_token(4,1)
     bo2.check_result()
 
     

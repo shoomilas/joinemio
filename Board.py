@@ -26,7 +26,7 @@ class Board:
 
     def __init__(self):
         self.grid = np.zeros(Board.shape, dtype=np.ushort)
-        self.fill_grid() # TODO: Remove
+        # self.fill_grid() # TODO: Remove
 
         self.game_over = False
 
@@ -113,9 +113,17 @@ def main():
     # bo.check_sequence(bo.grid[:,3], 4)
     # log.debug("======")
     # log.debug(bo.check_sequence(b, 4))
-    log.debug("======")
     # bo.check_sequence(a, 4)
     bo.check_result()
+    log.debug("======")
+
+    bo2 = Board()
+    bo.drop_token(1,1)
+    bo.drop_token(2,1)
+    bo.drop_token(3,1)
+    bo.drop_token(4,1)
+    bo2.check_result()
+
     
     # log.debug("======")
 

@@ -4,6 +4,7 @@ from pyglet import gl
 from pyglet import graphics
 from pyglet.window import Window
 from pyglet.window import mouse
+from pyglet import text
 import numpy as np
 from board import Game
 from board import GameState
@@ -37,7 +38,18 @@ class GameWindow:
         self.window.clear()
         self.draw_grid()
         self.draw_all_pieces()
-
+        self.draw_result()
+        
+    def draw_result(self):
+        game_over_text = 'GAME OVER'
+        if self.game.game_state == GameState.finished:
+            label = text.Label(game_over_text,
+                        font_name='impact',
+                        font_size=48,
+                        x=self.window.width//2, y=self.window.height//2,
+                        anchor_x='center', anchor_y='center')
+            label.draw()
+        
     def on_mouse_press(self, x, y, button, modifiers):
         if self.game.game_state == GameState.finished:
             return

@@ -41,7 +41,12 @@ class GameWindow:
         self.draw_result()
         
     def draw_result(self):
-        game_over_text = 'GAME OVER'
+        winner = 'RED'
+        if self.game.current_player == 1:
+            winner = 'RED'
+        if self.game.current_player == 2:
+            winner = 'BLUE'
+        game_over_text = f"GAME OVER | {winner} won"
         if self.game.game_state == GameState.finished:
             label = text.Label(game_over_text,
                         font_name='impact',

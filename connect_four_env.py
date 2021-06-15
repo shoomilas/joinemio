@@ -39,6 +39,17 @@ class ConnectFourEnv(gym.Env):
         self.action_space = Discrete(board_width)
         self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.ushort)
 
+    def rewarder(self):   # Could make it into __init__ parameter / make it configurable with another method
+        if self.game.game_state == GameState.finished:
+            if self.game.winner == 1:
+                return Reward.win
+            elif self.game.winner == 2:
+                return Reward.loss
+            else:
+                return Reward.draw
+        else:
+            return Reward.not_end
+
     def play_one_game(self, player1_main, player2_opponent, each_step_render=False):
         if each_step_render:
             self.observation_space = self.reset()
@@ -57,15 +68,7 @@ class ConnectFourEnv(gym.Env):
 
     def step(self, action):  # close to move from Game class
         self.game.move(action)  # switching player if game not ended
-        if self.game.game_state == GameState.finished:
-            if self.game.winner == 1:
-                return self.observation_space, Reward.win, self.game.game_state, {}
-            elif self.game.winner == 2:
-                return self.observation_space, Reward.loss, self.game.game_state, {}
-            else:
-                return self.observation_space, Reward.draw, self.game.game_state, {}
-        else:
-            return self.observation_space, Reward.not_end, self.game.game_state, {}  # not end
+        return self.observation_space, self.rewarder(), self.game.game_state, {}  # not end
 
     def reset(self):
         self.game = Game()
@@ -87,10 +90,12 @@ def main():
     player1 = RandomPlayer()
     player2 = RandomPlayer()
     
-    for i in range(100):
-        env.play_one_game(player1, player2, each_step_render=False)  # Plays the game
+    for i in range(10):
+        one_game = env.play_one_game(player1, player2, each_step_render=False)  # Plays the game
+        # log.info(one_game[2]) # Done
+        log.info(one_game)
         # env.render() # Will cause showing the result board
-        env.render(mode = 'console')
+        # env.render(mode = 'console')
     # env.play_one_game(player1, player2, each_step_render=True) # each_step_render to see the gameplay
 
 

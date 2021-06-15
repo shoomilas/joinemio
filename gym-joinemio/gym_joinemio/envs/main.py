@@ -1,4 +1,4 @@
-from game_window import GameWindow
+from gym_joinemio.envs.game_window import GameWindow
 from pyglet import clock
 from pyglet import app
 

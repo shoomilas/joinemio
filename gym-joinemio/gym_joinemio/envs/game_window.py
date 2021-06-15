@@ -6,8 +6,8 @@ from pyglet.window import Window
 from pyglet.window import mouse
 from pyglet import text
 import numpy as np
-from board import Game
-from board import GameState
+from gym_joinemio.envs.board import Game
+from gym_joinemio.envs.board import GameState
 
 
 class GameWindow:

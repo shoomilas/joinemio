@@ -2,14 +2,15 @@ import gym
 import enum
 import logging as logging
 import numpy as np
-from player import RandomPlayer, AIPlayer
+
+from gym_joinemio.envs.player import RandomPlayer, AIPlayer
+from gym_joinemio.envs.board import Game, Board, GameState
+from gym_joinemio.envs.game_window import GameWindow
 from gym.spaces import Discrete, Box
-from board import Game, Board, GameState
-from game_window import GameWindow
 from pyglet import clock
 from pyglet import app
 
-logging.getLogger("board").setLevel(logging.CRITICAL)
+logging.getLogger("gym_joinemio.envs.board").setLevel(logging.CRITICAL)
 log = logging.getLogger(__name__)
 
 
@@ -37,6 +38,7 @@ class ConnectFourEnv(gym.Env):
         self.game = Game()
         board_width = Board.shape[1]
         self.action_space = Discrete(board_width)
+        self.recording = [] # (player, move, reward for move)
         self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.ushort)
 
     def rewarder(self):   # Could make it into __init__ parameter / make it configurable with another method
@@ -59,8 +61,12 @@ class ConnectFourEnv(gym.Env):
         else:
             players = [player1_main, player2_opponent]
             self.observation_space = self.reset()
+            action = None
             while not self.game.game_state == GameState.finished:
-                self.observation_space, reward, done, info = self.step(players[self.game.current_player-1].get_action(self.observation_space))
+                current_player = self.game.current_player-1
+                action = players[current_player].get_action(self.observation_space)
+                self.observation_space, reward, done, info = self.step(action)
+                self.recording.append((current_player+1, action, self.rewarder()))
             log.debug(
                 f"Winner: {self.game.winner}"
             )
@@ -89,7 +95,7 @@ def main():
     env = ConnectFourEnv()
     player1 = RandomPlayer()
     player2 = RandomPlayer()
-    
+
     for i in range(10):
         one_game = env.play_one_game(player1, player2, each_step_render=False)  # Plays the game
         # log.info(one_game[2]) # Done

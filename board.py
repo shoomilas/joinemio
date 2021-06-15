@@ -1,11 +1,11 @@
 import itertools
-import logging as log
+import logging as logging
 import numpy as np
 
-
-LOG_LEVEL = log.DEBUG
-LOG_FORMAT = "[%(levelname)s] %(message)s"
-log.basicConfig(format=LOG_FORMAT, level=LOG_LEVEL)
+LOG_LEVEL = logging.DEBUG
+LOG_FORMAT = "[%(levelname)s][%(module)s|%(name)s] %(message)s"
+logging.basicConfig(format=LOG_FORMAT, level=LOG_LEVEL)
+log = logging.getLogger(__name__)
 
 
 class GameState:

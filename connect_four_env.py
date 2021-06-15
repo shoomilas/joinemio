@@ -1,31 +1,17 @@
 import gym
 import enum
-import random
-import logging as log
+import logging as logging
 import numpy as np
+from player import RandomPlayer, AIPlayer
 from gym.spaces import Discrete, Box
-from Board import Game, Board, GameState
+from board import Game, Board, GameState
 from game_window import GameWindow
 from pyglet import clock
 from pyglet import app
 
+logging.getLogger("board").setLevel(logging.CRITICAL)
+log = logging.getLogger(__name__)
 
-class RandomPlayer:
-    def get_action(self, board_state):
-        return random.choice(self.possible_moves(board_state))
-
-    @staticmethod
-    def possible_moves(board_state):
-        available_cols = []
-        for i in range(len(board_state[0])):
-            if board_state[0][i] == 0:
-                available_cols.append(i)
-        return available_cols
-
-
-class AIPlayer:
-    def get_action(self, board_state, my_token):  # TODO
-        pass
 
 
 class GameWindowForBots(GameWindow):
@@ -49,7 +35,8 @@ class Reward(enum.Enum):
 class ConnectFourEnv(gym.Env):
     def __init__(self):
         self.game = Game()
-        self.action_space = Discrete(7)
+        board_width = Board.shape[1]
+        self.action_space = Discrete(board_width)
         self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.ushort)
 
     def play_one_game(self, player1_main, player2_opponent, each_step_render=False):
@@ -62,8 +49,7 @@ class ConnectFourEnv(gym.Env):
             players = [player1_main, player2_opponent]
             self.observation_space = self.reset()
             while not self.game.game_state == GameState.finished:
-                self.observation_space, reward, done, info = \
-                    self.step(players[self.game.current_player-1].get_action(self.observation_space))
+                self.observation_space, reward, done, info = self.step(players[self.game.current_player-1].get_action(self.observation_space))
             log.debug(
                 f"Winner: {self.game.winner}"
             )
@@ -98,12 +84,14 @@ class ConnectFourEnv(gym.Env):
 
 def main():
     env = ConnectFourEnv()
-    rand1 = RandomPlayer()
-    rand2 = RandomPlayer()
-    for i in range(3):
-        env.play_one_game(rand1, rand2, each_step_render=False)  # only results
-        env.render()
-    env.play_one_game(rand1, rand2, each_step_render=True)
+    player1 = RandomPlayer()
+    player2 = RandomPlayer()
+    
+    for i in range(100):
+        env.play_one_game(player1, player2, each_step_render=False)  # Plays the game
+        # env.render() # Will cause showing the result board
+        env.render(mode = 'console')
+    # env.play_one_game(player1, player2, each_step_render=True) # each_step_render to see the gameplay
 
 
 if __name__ == "__main__":

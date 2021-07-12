@@ -33,10 +33,10 @@ class GameWindowForBots(GameWindow):
 
 
 class Reward(enum.Enum):
-    win = 100
-    loss = -100
-    draw = 1
-    not_end = 0
+    win = 1
+    loss = -10
+    draw = -1
+    not_end = 1/42
 
 
 Transition = namedtuple("Transition", ("state", "action", "next_state", "reward"))

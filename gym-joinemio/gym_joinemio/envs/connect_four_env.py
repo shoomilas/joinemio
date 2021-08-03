@@ -5,7 +5,7 @@ import numpy as np
 import random
 
 from collections import namedtuple, deque
-from gym_joinemio.envs.player import RandomPlayer, AIPlayer
+from gym_joinemio.envs.player import RandomPlayer 
 from gym_joinemio.envs.board import Game, Board, GameState
 from gym_joinemio.envs.game_window import GameWindow
 from gym.spaces import Discrete, Box

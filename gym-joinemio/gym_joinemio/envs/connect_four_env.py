@@ -36,7 +36,7 @@ class Reward(enum.Enum):
     win = 1
     loss = -10
     draw = -1
-    not_end = 1/42
+    not_end = 1/42 # TODO: set to 0 if rewarding AFTER game ends, set to -LOW_VALUE to learn how to end games quicker
 
 
 Transition = namedtuple("Transition", ("state", "action", "next_state", "reward"))

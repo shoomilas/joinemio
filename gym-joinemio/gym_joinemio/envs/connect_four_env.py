@@ -96,6 +96,13 @@ class ConnectFourEnv(gym.Env):
             log.debug(f"Winner: {self.game.winner}")
             return self.observation_space, reward, done, info  # reward for player1
 
+    def play_one_step(self, player1_main, player2_opponent):
+        action = player1_main.get_action(self.observation_space)
+        self.observation_space, reward, done, info = self.step(action)
+        self.recording.append((self.game.current_player, action, self.rewarder()))
+        player2_opponent.get_action(self.observation_space)
+        return self.observation_space, reward, done, info  # reward for player1
+
     def step(self, action):  # close to move from Game class
         self.game.move(action)  # switching player if game not ended
         return (

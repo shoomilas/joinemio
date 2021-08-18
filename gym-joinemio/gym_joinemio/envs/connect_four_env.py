@@ -110,10 +110,11 @@ class ConnectFourEnv(gym.Env):
         action2 = self.opponent_action(self.game.board.grid)
         if self.game.game_state != GameState.finished:
             self.game.move_player(action2, 2)
+            reward = self.rewarder()
         
         return (
             self.observation_space,
-            self.rewarder(),
+            reward,
             self.game.game_state,
             {},
         )  # not end

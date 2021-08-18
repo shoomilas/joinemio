@@ -63,7 +63,7 @@ class ConnectFourEnv(gym.Env):
         board_width = Board.shape[1]
         self.action_space = Discrete(board_width)
         self.recording = []  # (player, move, reward for move)
-        self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.ushort)
+        self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.uint8)
 
     def opponent_action_set(self, opponent_action):
         self.opponent_action = opponent_action
@@ -100,7 +100,7 @@ class ConnectFourEnv(gym.Env):
 
     def step(self, action):  # close to move from Game classH
         self.game.move_player(action, 1)
-        self.observation_space, reward, done, info =  (
+        observation_space, reward, done, info =  (
             self.observation_space,
             self.rewarder(),
             self.game.game_state,
@@ -113,7 +113,7 @@ class ConnectFourEnv(gym.Env):
             reward = self.rewarder()
         
         return (
-            self.observation_space,
+            self.game.board.grid, # self.observation_space,
             reward,
             self.game.game_state,
             {},

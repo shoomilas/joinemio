@@ -132,6 +132,19 @@ class Game:
                     self.game_state = GameState.finished
         else:
             return
+    
+    def move_player(self, column, current_player):
+        self.current_player = current_player
+        if self.board.drop_token(column, self.current_player):
+            game_result = self.board.check_result()
+            if game_result == GameState.finished:
+                self.winner = self.current_player
+                self.game_state = game_result
+            else:
+                if not self.board.check_if_not_full():
+                    self.game_state = GameState.finished
+        else:
+            return
 
 
 def main():

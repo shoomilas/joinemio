@@ -36,7 +36,7 @@ class Reward(enum.Enum):
     win = 1
     loss = -10
     draw = -1
-    not_end = 1/42 # TODO: set to 0 if rewarding AFTER game ends, set to -LOW_VALUE to learn how to end games quicker
+    not_end = -1/42 # TODO: set to 0 if rewarding AFTER game ends, set to -LOW_VALUE to learn how to end games quicker
 
 
 Transition = namedtuple("Transition", ("state", "action", "next_state", "reward"))
@@ -63,7 +63,10 @@ class ConnectFourEnv(gym.Env):
         board_width = Board.shape[1]
         self.action_space = Discrete(board_width)
         self.recording = []  # (player, move, reward for move)
-        self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.ushort)
+        self.observation_space = Box(low=0, high=2, shape=Board.shape, dtype=np.uint8)
+
+    def opponent_action_set(self, opponent_action):
+        self.opponent_action = opponent_action
 
     def rewarder(
         self,
@@ -78,29 +81,40 @@ class ConnectFourEnv(gym.Env):
         else:
             return Reward.not_end
 
-    def play_one_game(self, player1_main, player2_opponent, each_step_render=False):
-        if each_step_render:
-            self.observation_space = self.reset()
-            window = GameWindowForBots(self.game, player1_main, player2_opponent)
-            clock.schedule_interval(window.update_for_bots, GameWindow.refresh_rate)
-            app.run()
-        else:
-            players = [player1_main, player2_opponent]
-            self.observation_space = self.reset()
-            action = None
-            while not self.game.game_state == GameState.finished:
-                current_player = self.game.current_player - 1
-                action = players[current_player].get_action(self.observation_space)
-                self.observation_space, reward, done, info = self.step(action)
-                self.recording.append((current_player + 1, action, self.rewarder()))
-            log.debug(f"Winner: {self.game.winner}")
-            return self.observation_space, reward, done, info  # reward for player1
+    # def play_one_game(self, player1_main, player2_opponent, each_step_render=False):
+    #     if each_step_render:
+    #         self.observation_space = self.reset()
+    #         window = GameWindowForBots(self.game, player1_main, player2_opponent)
+    #         clock.schedule_interval(window.update_for_bots, GameWindow.refresh_rate)
+    #         app.run()
+    #     else:
+    #         players = [player1_main, player2_opponent]
+    #         self.observation_space = self.reset()
+    #         action = None
+    #         while not self.game.game_state == GameState.finished:
+    #             current_player = self.game.current_player - 1
+    #             action = players[current_player].get_action(self.observation_space)
+    #             self.observation_space, reward, done, info = self.step(action)
+    #         log.debug(f"Winner: {self.game.winner}")
+    #         return self.observation_space, reward, done, info  # reward for player1
 
-    def step(self, action):  # close to move from Game class
-        self.game.move(action)  # switching player if game not ended
-        return (
+    def step(self, action):  # close to move from Game classH
+        self.game.move_player(action, 1)
+        observation_space, reward, done, info =  (
             self.observation_space,
             self.rewarder(),
+            self.game.game_state,
+            {},
+        ) 
+
+        action2 = self.opponent_action(self.game.board.grid)
+        if self.game.game_state != GameState.finished:
+            self.game.move_player(action2, 2)
+            reward = self.rewarder()
+        
+        return (
+            self.game.board.grid, # self.observation_space,
+            reward,
             self.game.game_state,
             {},
         )  # not end

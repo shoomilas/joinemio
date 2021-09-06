@@ -63,7 +63,7 @@ class GameWindow:
         if button == mouse.LEFT:
             self.game.move(column_clicked)
         if self.game.game_state != GameState.finished:
-            self.game.move(self.agent.get_net_action(self.game.board))
+            self.game.move(self.agent.get_net_action(self.game.board.grid))
 
     def update(self, dt):
         if self.game.game_state == GameState.finished:

@@ -24,7 +24,8 @@ class GameWindow:
     win_width = 7 * column_width
     win_height = 6 * row_height
 
-    def __init__(self, game=None):
+    def __init__(self, agent, game =None):#oponent_action_fun, game=None):
+        self.agent = agent
         self.game = game
         if game is None:
             self.game = Game()
@@ -61,6 +62,8 @@ class GameWindow:
         column_clicked = x // self.column_width
         if button == mouse.LEFT:
             self.game.move(column_clicked)
+        if self.game.game_state != GameState.finished:
+            self.game.move(self.agent.get_net_action(self.game.board.grid))
 
     def update(self, dt):
         if self.game.game_state == GameState.finished:

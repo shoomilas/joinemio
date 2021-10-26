@@ -11,6 +11,10 @@ ML-based implementation of a popular board game that revolves around connecting 
 - SciPy stack
 - OpenAI Gym
 
+## Sample Run:
+Rough demo recording (blue being the AI-based opponent):
+![sample-run-gif](https://raw.githubusercontent.com/shoomilas/joinemio/master/docs/img/SampleRun.gif)
+
 ## Iterations Outline:
 
 1. 30.04 - 06.05:

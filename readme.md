@@ -17,7 +17,6 @@ ML-based implementation of a popular board game that revolves around connecting 
 - PyTorch
 - SciPy stack
 - OpenAI Gym
-- SQLite
 
 ## Iterations Outline:
 
